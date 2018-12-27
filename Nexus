@@ -1,0 +1,491 @@
+#!/usr/bin/python
+
+# coding: utf-8 
+
+# import 'random', 'math' modules
+
+import math, random, numpy
+
+# import 'Tkinter' module to create a GUI
+
+from tkMessageBox import *
+
+from Tkinter import *
+
+
+
+
+
+
+def roundUp(a, num_bits):
+
+    '''Get round number'''
+
+
+    n = 10 ** num_bits
+
+    a1 = float(int(a * n))
+
+    tag = a * n - a1
+
+    if tag >= 0.5:
+
+        return (a1 + 1) / float(n)
+
+    else:
+
+        return a1 / float(n)
+
+
+
+# make a list to save the results of every calculating process
+
+list_results = []
+ 
+
+
+
+
+def get_three_num(ave, precision):
+
+    '''
+
+    define a function to get three random numbers according to average number
+
+    precision is integer, and ave is float
+   
+    '''     
+
+
+    result_list = []
+
+    for i in numpy.arange(ave - 5, ave + 5, 0.01):
+
+        for j in numpy.arange(ave - 5, ave + 5, 0.01):
+
+            if (i > 0 and j > 0 and 
+
+                abs(i - ave) / i <= precision / 100.00 and
+
+                abs(j - ave) / j <= precision / 100.00 and
+
+                roundUp((i + j) / 2.00, 3) == ave): 
+
+                result_list.append((roundUp(i, 2), roundUp(j, 2)))
+
+    return random.choice(result_list)
+                 
+     
+    
+
+
+# create a GUI to show the result
+
+root = Tk()
+
+root.title('Gas Chromatography Lab')
+
+frame_root = Frame(root)
+
+frame_root.pack()
+
+
+
+
+# CREATE A FRAME TO CONTAIN THE RESULT AFTER INPUT THE AVERAGE
+
+frame_ave = Frame(frame_root)
+
+Label(frame_ave, text = 'Average(uL/L):', padx = 3, pady = 0).grid(row = 1, padx = 5, pady = 0)
+
+e_Ave = Entry(frame_ave)
+
+e_Ave.grid(row = 1, column = 1, padx = 5, pady = 5)
+
+Label(frame_ave, text = 'Precision(%):', padx = 3, pady = 0).grid(row = 2, padx = 5, pady = 0)
+
+e_Prec = Entry(frame_ave)
+
+e_Prec.grid(row = 2, column = 1, padx = 5, pady = 5)
+
+Label(frame_ave, text = 'Results(uL/L):', padx = 3, pady = 0).grid(row = 3, padx = 5, pady = 0)
+
+
+
+var = StringVar()
+
+var_count = StringVar()
+
+
+
+count = 1
+
+
+
+
+def return_event(x):
+
+    '''Get the results'''
+
+    
+
+    if e_Ave.get() == '' or e_Prec.get() == '' :
+
+        showinfo(title = 'Warning!', message = 'Empty exists, Please input again!')  # messagebox to warn input nonempty number
+
+    if float(e_Ave.get()) == 0:
+
+        a_result, b_result = 0, 0
+
+        var.set(str(a_result) + ',  ' + str(b_result))
+
+    if not float(e_Ave.get()) == 0:
+
+        a_result, b_result = get_three_num(float(e_Ave.get()), float(e_Prec.get()))  # change the content of entry to integer number
+
+        var.set(str(a_result) + ',  ' + str(b_result))
+
+    Label(frame_ave, textvariable = var, justify = 'center').grid(row = 3, column = 1, padx = 5, pady = 0)  # show the result
+
+    global count
+
+    var_count.set('Count:' + str(count))
+
+    count += 1    
+
+    global list_results
+
+    list_results.append((a_result, b_result))
+
+
+
+    Label(frame_ave, textvariable = var_count).grid(row = 1, column = 2)
+
+    if len(list_results) > 4:
+
+        list_results = []
+
+        count = 1  
+
+    
+
+
+
+e_Ave.bind('<Return>', return_event) # bind 'enter' event with Entry e_Ave
+
+e_Prec.bind('<Return>', return_event) # bind 'enter' event with Entry e_Prec
+
+
+
+Label(frame_ave, text = 'Please input integers while inputing precision!').grid(row = 4, column = 1, padx = 10, pady = 5)
+
+
+Button(frame_ave, text = 'Quit', command = root.quit, padx = 10, pady = 3).grid(row = 5, column = 8, padx = 10, pady = 5)  # quit from the current window
+
+
+
+# CREATE A LABEL TO SHOW THE PROCESS SYMBOL OF THE CALCULATING PROCESS
+
+Label(frame_ave, text = '===>>').grid(row = 2, column = 2)
+
+
+# CREATE LABELS TO CONTAIN THE RESULTS OF EVERY CALCULATING RESULT
+
+# show the name of all the projects
+
+Label(frame_ave, text = 'CH4').grid(row = 0, column = 3, padx = 5, pady = 0)
+
+Label(frame_ave, text = 'C2H6').grid(row = 0, column = 4, padx = 5, pady = 0)
+
+Label(frame_ave, text = 'C2H4').grid(row = 0, column = 5, padx = 5, pady = 0)
+
+Label(frame_ave, text = 'C2H2').grid(row = 0, column = 6, padx = 5, pady = 0)
+
+
+# CREATE A LABEL TO SHOW THE PROCESS SYMBOL OF THE CALCULATING PROCESS
+
+Label(frame_ave, text = '===>>').grid(row = 1, column = 7)
+
+Label(frame_ave, text = '===>>').grid(row = 2, column = 7)
+
+
+
+# show the result of all the projects above
+
+Label(frame_ave, text = 'Sum:').grid(row = 1, column = 8, padx = 5, pady = 0)
+
+Label(frame_ave, text = 'Sum:').grid(row = 2, column = 8, padx = 5, pady = 0)
+
+Label(frame_ave, text = 'Average(Up and Down):').grid(row = 3, column = 8, padx = 5, pady = 0)
+
+
+var_ave_1_up = StringVar()
+
+var_ave_1_down = StringVar()
+
+var_ave_2_up = StringVar()
+
+var_ave_2_down = StringVar()
+
+var_ave_3_up = StringVar()
+
+var_ave_3_down = StringVar()
+
+var_ave_4_up = StringVar()
+
+var_ave_4_down = StringVar()
+
+var_ave_row_up = StringVar()
+
+var_ave_row_down = StringVar()
+
+var_ave_up_and_down = StringVar()
+
+
+
+
+
+
+def export_result():
+
+    '''
+
+    get the result after calculating every time
+
+    '''
+
+
+    global list_results
+
+    if len(list_results) == 0:
+
+        showinfo(title = 'Warning!', message = 'The numbers exported have been cleaned, try recalculate and reexport again!')
+
+    elif len(list_results) == 1:
+
+        var_ave_1_up.set(str(list_results[0][0]))
+
+        var_ave_1_down.set(str(list_results[0][1]))
+
+        var_ave_2_up.set('')
+
+        var_ave_2_down.set('')
+
+        var_ave_3_up.set('')
+
+        var_ave_3_down.set('')
+
+        var_ave_4_up.set('')
+
+        var_ave_4_down.set('')
+
+        
+
+    elif len(list_results) == 2:
+
+        var_ave_1_up.set(str(list_results[0][0]))
+
+        var_ave_1_down.set(str(list_results[0][1]))
+
+        var_ave_2_up.set(str(list_results[1][0]))
+
+        var_ave_2_down.set(str(list_results[1][1]))
+
+        var_ave_3_up.set('')
+
+        var_ave_3_down.set('')
+
+        var_ave_4_up.set('')
+
+        var_ave_4_down.set('')
+
+
+    elif len(list_results) == 3:
+
+        var_ave_1_up.set(str(list_results[0][0]))
+
+        var_ave_1_down.set(str(list_results[0][1]))
+
+        var_ave_2_up.set(str(list_results[1][0]))
+
+        var_ave_2_down.set(str(list_results[1][1]))
+
+        var_ave_3_up.set(str(list_results[2][0]))
+
+        var_ave_3_down.set(str(list_results[2][1]))
+
+        var_ave_4_up.set('')
+
+        var_ave_4_down.set('')
+
+
+    elif len(list_results) == 4:
+
+        var_ave_1_up.set(str(list_results[0][0]))
+
+        var_ave_1_down.set(str(list_results[0][1]))
+
+        var_ave_2_up.set(str(list_results[1][0]))
+
+        var_ave_2_down.set(str(list_results[1][1]))
+
+        var_ave_3_up.set(str(list_results[2][0]))
+
+        var_ave_3_down.set(str(list_results[2][1]))
+
+        var_ave_4_up.set(str(list_results[3][0]))
+
+        var_ave_4_down.set(str(list_results[3][1]))
+
+
+
+        average_row_up = roundUp((list_results[0][0] + list_results[1][0] + list_results[2][0] + list_results[3][0]), 3)
+
+        average_row_down = roundUp((list_results[0][1] + list_results[1][1] + list_results[2][1] + list_results[3][1]), 3)
+
+        average_up_and_down = roundUp((average_row_up + average_row_down) / 2.00, 3)
+
+        var_ave_row_up.set(str(average_row_up))
+
+        var_ave_row_down.set(str(average_row_down))
+
+        var_ave_up_and_down.set(str(average_up_and_down))
+
+        # calculate the average of all the labels above
+
+        Label(frame_ave, textvariable = var_ave_row_up).grid(row = 1, column = 9, padx = 5, pady = 0)
+
+        Label(frame_ave, textvariable = var_ave_row_down).grid(row = 2, column = 9, padx = 5, pady = 0)
+
+        Label(frame_ave, textvariable = var_ave_up_and_down).grid(row = 3, column = 9, padx = 5, pady = 0)
+
+
+    Label(frame_ave, textvariable = var_ave_1_up).grid(row = 1, column = 3)
+    
+    Label(frame_ave, textvariable = var_ave_1_down).grid(row = 2, column = 3)
+
+    Label(frame_ave, textvariable = var_ave_2_up).grid(row = 1, column = 4)
+    
+    Label(frame_ave, textvariable = var_ave_2_down).grid(row = 2, column = 4)
+    
+    Label(frame_ave, textvariable = var_ave_3_up).grid(row = 1, column = 5)
+    
+    Label(frame_ave, textvariable = var_ave_3_down).grid(row = 2, column = 5)
+    
+    Label(frame_ave, textvariable = var_ave_4_up).grid(row = 1, column = 6)
+    
+    Label(frame_ave, textvariable = var_ave_4_down).grid(row = 2, column = 6)
+
+
+
+
+def clr():
+
+    '''
+   
+    clear the content of Entry
+
+    '''
+
+
+    global list_results
+
+    global count
+
+    count = 1
+
+    list_results = []
+
+    e_Ave.delete(0, END)
+
+    e_Prec.delete(0, END)
+
+    var.set('')
+
+    var_ave_1_up.set('')
+
+    var_ave_1_down.set('')
+
+    var_ave_2_up.set('')
+
+    var_ave_2_down.set('')
+
+    var_ave_3_up.set('')
+
+    var_ave_3_down.set('')
+
+    var_ave_4_up.set('')
+
+    var_ave_4_down.set('')
+
+    var_ave_row_up.set('')
+
+    var_ave_row_down.set('')
+
+    var_ave_up_and_down.set('')
+
+    var_count.set('Count:1')
+
+    Label(frame_ave, textvariable = var_count).grid(row = 1, column = 2)
+
+    Label(frame_ave, textvariable = var_ave_1_up).grid(row = 1, column = 3)
+    
+    Label(frame_ave, textvariable = var_ave_1_down).grid(row = 2, column = 3)
+
+    Label(frame_ave, textvariable = var_ave_2_up).grid(row = 1, column = 4)
+    
+    Label(frame_ave, textvariable = var_ave_2_down).grid(row = 2, column = 4)
+    
+    Label(frame_ave, textvariable = var_ave_3_up).grid(row = 1, column = 5)
+    
+    Label(frame_ave, textvariable = var_ave_3_down).grid(row = 2, column = 5)
+    
+    Label(frame_ave, textvariable = var_ave_4_up).grid(row = 1, column = 6)
+    
+    Label(frame_ave, textvariable = var_ave_4_down).grid(row = 2, column = 6)
+
+    # calculate the average of all the labels above
+
+    Label(frame_ave, textvariable = var_ave_row_up).grid(row = 1, column = 9, padx = 5, pady = 0)
+
+    Label(frame_ave, textvariable = var_ave_row_down).grid(row = 2, column = 9, padx = 5, pady = 0)
+
+    Label(frame_ave, textvariable = var_ave_up_and_down).grid(row = 3, column = 9, padx = 5, pady = 0)
+
+    Label(frame_ave, textvariable = var).grid(row = 3, column = 1, padx = 5, pady = 0)
+
+
+
+
+
+Button(frame_ave, text = 'Clear', command = clr, padx = 10, pady = 3).grid(row = 5, column = 1, padx = 20, pady = 5)  # calculate the aveult
+
+Button(frame_ave, text = 'Export', command = export_result, padx = 10, pady = 3).grid(row = 5, column = 4, padx = 10, pady = 5)
+
+
+
+frame_ave.pack(padx = 5, pady = 5)
+
+# CREATE A FRAME TO EXPLAIN THE METHOD OF USING FOR THIS SOFTWARE
+
+frame_exp = Frame(frame_root)
+
+Label(frame_exp, text = '--' * 75).grid(row = 0, column = 5)
+
+Label(frame_exp, text = '1. The sum and average can only be calculated after exporting four successed results!').grid(row = 1, column = 5)
+
+Label(frame_exp, text = '2. The results are exported according to the \'count x\', for example: \'count 1\' shows the first calculate result, and \'count 4\' shows the fourth result!').grid(row = 2, column = 5)
+
+Label(frame_exp, text = '3. The fifth result cannot be exported, but the fifth result is already accurate! After the \'count 5\' follows the \'count 1\' again and you can export result again!').grid(row = 3, column = 5)
+
+Label(frame_exp, text = '4. You can export the result after every successed calculate or after four successed calculates!').grid(row = 4, column = 5)
+
+Label(frame_exp, text = '5. After \'count 5\' the results exported will be cleaned, and you need to wait for the next \'count 1\' calculating and exporting!').grid(row = 5, column = 5)
+
+Label(frame_exp, text = '--' * 75).grid(row = 6, column = 5)
+
+frame_exp.pack()
+
+
+
+mainloop()
