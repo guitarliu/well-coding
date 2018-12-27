@@ -1,0 +1,353 @@
+# coding: utf-8
+
+# import modules
+
+from Tkinter import *
+
+from tkMessageBox import *
+
+
+
+
+
+root = Tk()
+
+root.title('颗粒度平均值计算'.decode('gbk', 'ignore'))
+
+frame_root = Frame(root)
+
+frame_gran = Frame(frame_root)
+
+
+
+# add labels in frame_gran
+
+Label(frame_gran, text = '5μm:'.decode('gbk', 'ignore'), padx = 1, pady = 1).grid(row = 0)
+
+e_5_1 = Entry(frame_gran)
+
+e_5_1.grid(row = 0, column = 1, padx = 5, pady = 3)
+
+e_5_2 = Entry(frame_gran)
+
+e_5_2.grid(row = 0, column = 2, padx = 5, pady = 3)
+
+e_5_3 = Entry(frame_gran)
+
+e_5_3.grid(row = 0, column = 3, padx = 5, pady = 3)
+
+Label(frame_gran, text = '15μm:'.decode('gbk', 'ignore'), padx = 1, pady = 1).grid(row = 1)
+
+e_15_1 = Entry(frame_gran)
+
+e_15_1.grid(row = 1, column = 1, padx = 5, pady = 3)
+
+e_15_2 = Entry(frame_gran)
+
+e_15_2.grid(row = 1, column = 2, padx = 5, pady = 3)
+
+e_15_3 = Entry(frame_gran)
+
+e_15_3.grid(row = 1, column = 3, padx = 5, pady = 3)
+
+Label(frame_gran, text = '25μm:'.decode('gbk', 'ignore'), padx = 1, pady = 1).grid(row = 2)
+
+e_25_1 = Entry(frame_gran)
+
+e_25_1.grid(row = 2, column = 1, padx = 5, pady = 3)
+
+e_25_2 = Entry(frame_gran)
+
+e_25_2.grid(row = 2, column = 2, padx = 5, pady = 3)
+
+e_25_3 = Entry(frame_gran)
+
+e_25_3.grid(row = 2, column = 3, padx = 5, pady = 3)
+
+Label(frame_gran, text = '50μm:'.decode('gbk', 'ignore'), padx = 1, pady = 1).grid(row = 3)
+
+e_50_1 = Entry(frame_gran)
+
+e_50_1.grid(row = 3, column = 1, padx = 5, pady = 3)
+
+e_50_2 = Entry(frame_gran)
+
+e_50_2.grid(row = 3, column = 2, padx = 5, pady = 3)
+
+e_50_3 = Entry(frame_gran)
+
+e_50_3.grid(row = 3, column = 3, padx = 5, pady = 3)
+
+Label(frame_gran, text = '100μm:'.decode('gbk', 'ignore'), padx = 1, pady = 1).grid(row = 4)
+
+e_100_1 = Entry(frame_gran)
+
+e_100_1.grid(row = 4, column = 1, padx = 5, pady = 3)
+
+e_100_2 = Entry(frame_gran)
+
+e_100_2.grid(row = 4, column = 2, padx = 5, pady = 3)
+
+e_100_3 = Entry(frame_gran)
+
+e_100_3.grid(row = 4, column = 3, padx = 5, pady = 3)
+
+
+
+# create a process symbol '===>>' to show the processing of calculate
+
+Label(frame_gran, text = '===>>'.decode('gbk', 'ignore'), padx = 0, pady = 1).grid(row = 2, column = 4)
+
+Label(frame_gran, text = '平均值:'.decode('gbk', 'ignore'), padx = 0, pady = 1).grid(row = 2, column = 5)
+
+Label(frame_gran, text = '===>>'.decode('gbk', 'ignore'), padx = 0, pady = 1).grid(row = 2, column = 7)
+
+Label(frame_gran, text = '级数:'.decode('gbk', 'ignore'), padx = 0, pady = 1).grid(row = 2, column = 8)
+
+
+
+
+
+# make a dict to contain the levels and corresponding particle size
+
+dict_levels = {'00': 125, '0': 250, '1': 500, '2': 1000, '3': 2000, '4': 4000, '5': 8000, '6': 16000, '7': 32000, '8': 64000,
+
+               '9': 128000, '10': 256000, '11': 512000, '12': 1024000}
+
+
+
+
+
+def get_ave_to_level(*av):
+
+    '''
+
+    make sure the levels of every component according to the average of 5 components separately
+
+    '''
+
+
+    list_average = []
+
+    for average in av:
+
+        list_average.append(int(average))
+
+    list_average.sort()
+
+    for key in dict_levels:
+
+        if dict_levels[key] == list_average[4]:
+
+            return key
+
+        if dict_levels[key] < list_average[4] < dict_levels[key] * 2:
+
+            for key_1 in dict_levels:
+
+                if dict_levels[key_1] == dict_levels[key] * 2:
+
+                    return key_1
+
+        if dict_levels['12'] < list_average[4]:
+
+            return '12'
+
+
+
+
+
+
+var_5_ave = StringVar()
+
+var_15_ave = StringVar()
+
+var_25_ave = StringVar()
+
+var_50_ave = StringVar()
+
+var_100_ave = StringVar()
+
+var_level = StringVar()
+
+
+
+
+
+
+
+def show():
+
+    '''
+
+    Create labels to show the average and the level
+
+    '''
+
+
+
+    if (e_5_1.get() == '' or e_5_2.get() == '' or e_5_3.get() == '' or
+
+        e_15_1.get() == '' or e_15_2.get() == '' or e_15_3.get() == '' or
+
+        e_25_1.get() == '' or e_25_2.get() == '' or e_25_3.get() == '' or
+
+        e_50_1.get() == '' or e_50_2.get() == '' or e_50_3.get() == '' or
+
+        e_100_1.get() == '' or e_100_2.get() == '' or e_100_3.get() == ''):
+
+        showinfo(title = 'Error Warning', message = '输入有空白，请重新输入!'.decode('gbk', 'ignore'))
+
+
+    
+    # calculate the average of five commponents separately
+
+    average_5 = (int(e_5_1.get()) + int(e_5_2.get()) + int(e_5_3.get())) / 3.00
+
+    average_5_round = round(average_5, 0)
+
+    average_15 = (int(e_15_1.get()) + int(e_15_2.get()) + int(e_15_3.get())) / 3.00
+
+    average_15_round = round(average_15, 0)
+
+    average_25 = (int(e_25_1.get()) + int(e_25_2.get()) + int(e_25_3.get())) / 3.00
+
+    average_25_round = round(average_25, 0)
+
+    average_50 = (int(e_50_1.get()) + int(e_50_2.get()) + int(e_50_3.get())) / 3.00
+
+    average_50_round = round(average_50, 0)
+
+    average_100 = (int(e_100_1.get()) + int(e_100_2.get()) + int(e_100_3.get())) / 3.00
+
+    average_100_round = round(average_100, 0)
+
+
+
+    var_5_ave.set(str(average_5_round))
+
+    var_15_ave.set(str(average_15_round))
+
+    var_25_ave.set(str(average_25_round))
+
+    var_50_ave.set(str(average_50_round))
+
+    var_100_ave.set(str(average_100_round))
+
+
+
+    # show the average of every component
+
+    Label(frame_gran, textvariable = var_5_ave).grid(row = 0, column = 6)
+
+    Label(frame_gran, textvariable = var_15_ave).grid(row = 1, column = 6)
+
+    Label(frame_gran, textvariable = var_25_ave).grid(row = 2, column = 6)
+
+    Label(frame_gran, textvariable = var_50_ave).grid(row = 3, column = 6)
+
+    Label(frame_gran, textvariable = var_100_ave).grid(row = 4, column = 6)
+
+    
+    # calculate the level according to the average of every component
+
+    level_result = get_ave_to_level(average_5_round, average_15_round, average_25_round, average_50_round, average_100_round)
+
+    var_level.set(level_result)
+    
+
+    # show the level of the group of numbers
+
+    Label(frame_gran, textvariable = var_level).grid(row = 2, column = 9)
+
+
+
+
+
+
+def clr():
+
+    '''
+
+    Clear the content of components
+
+    '''
+
+
+
+    e_5_1.delete(0, END)
+
+    e_5_2.delete(0, END)
+
+    e_5_3.delete(0, END)
+
+    e_15_1.delete(0, END)
+
+    e_15_2.delete(0, END)
+
+    e_15_3.delete(0, END)
+
+    e_25_1.delete(0, END)
+
+    e_25_2.delete(0, END)
+
+    e_25_3.delete(0, END)
+
+    e_50_1.delete(0, END)
+
+    e_50_2.delete(0, END)
+
+    e_50_3.delete(0, END)
+
+    e_100_1.delete(0, END)
+
+    e_100_2.delete(0, END)
+
+    e_100_3.delete(0, END)
+
+    var_5_ave.set('')
+
+    var_15_ave.set('')
+
+    var_25_ave.set('')
+
+    var_50_ave.set('')
+
+    var_100_ave.set('')
+
+    var_level.set('')
+
+
+
+    # show the average of every component and the level of the result
+
+    Label(frame_gran, textvariable = var_5_ave).grid(row = 0, column = 6)
+
+    Label(frame_gran, textvariable = var_15_ave).grid(row = 1, column = 6)
+
+    Label(frame_gran, textvariable = var_25_ave).grid(row = 2, column = 6)
+
+    Label(frame_gran, textvariable = var_50_ave).grid(row = 3, column = 6)
+
+    Label(frame_gran, textvariable = var_100_ave).grid(row = 4, column = 6)
+
+    Label(frame_gran, textvariable = var_level).grid(row = 2, column = 9)
+
+
+
+
+Button(frame_gran, text = '计算'.decode('gbk', 'ignore'), command = show).grid(row = 6, column = 1, padx = 10, pady = 3)
+
+Button(frame_gran, text = '清空'.decode('gbk', 'ignore'), command = clr).grid(row = 6, column = 2, padx = 10, pady = 3)
+
+Button(frame_gran, text = '退出'.decode('gbk', 'ignore'), command = root.quit).grid(row = 6, column = 3, padx = 10, pady = 3)
+
+
+
+frame_gran.pack(padx = 10, pady = 5)
+
+frame_root.pack(padx = 10, pady = 5)
+
+mainloop()
+
+    
