@@ -1,0 +1,126 @@
+#!/usr/bin/python
+
+# coding: utf-8 
+
+# import 'random', 'math' modules
+
+import math, random
+
+# import 'Tkinter' module to create a GUI
+
+from tkMessageBox import *
+
+from Tkinter import *
+
+
+
+
+
+def get_three_num(ave):
+
+    '''
+
+    get three random numbers according to average number
+
+    '''
+
+        
+
+    if not math.modf(ave)[0] == 0:
+
+        showinfo(title = 'Wrong Number', message = 'Please input integer number')
+
+    result_list = []
+
+    for i in range(ave-100, ave + 10):
+
+        for j in range(ave-100, ave + 10):
+    
+            for k in range(ave-100, ave + 10):
+
+                if ((not i == 0) and (not j == 0) and (not k == 0) and
+
+                   round((i + j + k) / 3.0) == ave and   # choose three numbers that satisfy  the percent of accuracy: 0.06
+                   
+                   abs(i - j) / 0.06 <= ave and
+
+                   abs(j - k) / 0.06 <= ave and
+
+                   abs(k - i) / 0.06 <= ave): 
+
+                    result_list.append((i, j, k))
+
+    return random.choice(result_list)
+                 
+     
+    
+
+
+# create a GUI to show the result after input the average
+
+root = Tk()
+
+root.title('Metal Granule')
+
+Label(root, text = 'Average: ').grid(row = 0)
+
+Label(root, text = 'Result: ').grid(row = 1)
+
+e = Entry(root)
+
+e.grid(row = 0, column = 1, padx = 10, pady = 5)
+
+var = StringVar()
+
+
+
+
+def return_event(x):
+
+    '''
+
+    Get the result and bind the result with <Return>
+
+    '''
+
+
+    
+    if e.get() == '':
+
+         showinfo(title = 'Warning!', message = 'Please input integer number!')  # messagebox to warn input nonempty number
+
+    a_result, b_result, c_result = get_three_num(int(e.get()))  # change the content of entry to integer number
+
+    var.set(str(a_result) + ',  ' + str(b_result) + ',  ' + str(c_result))
+
+    Label(root, textvariable = var, justify = 'center').grid(row = 1, column = 1)  # show the result
+
+
+
+
+def clr():  
+
+    '''
+
+    clear the content of Entry
+
+
+    '''
+
+
+    e.delete(0, END)
+
+    var.set('')
+
+    Label(root, textvariable = var).grid(row = 1, column = 1)
+
+
+e.bind('<Return>', return_event) # bind 'enter' event with Entry
+
+
+Button(root, text = 'Clear', width = 10, command = clr).grid(row = 3, column = 0, sticky = W, padx = 10, pady = 5)  # calculate the result         
+
+Button(root, text = 'Quit', width = 10, command = quit).grid(row = 3, column = 1, sticky = E, padx = 10, pady = 5)  # quit from the current window
+
+
+mainloop()
