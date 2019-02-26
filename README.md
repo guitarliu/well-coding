@@ -18,8 +18,8 @@ Project during first Job
 
 ## 关于作者
 
-```javascript
-  var ihubo = {
+```python
+  var info = {
     nickName  : "guitarliu",
     site : "https://github.com/guitarliu"
   }
